@@ -5,9 +5,7 @@ import openai
 from ._base import BaseSentimentClassifier, SentimentClassifierOutput
 
 
-class LLMSentimentClassifier(BaseSentimentClassifier):
-    input_variables = ["text"]
-    default_prompt_template = """You are a news sentiment classifier.
+DEFAULT_PROMPT_TEMPLATE = """You are a news sentiment classifier.
 Given a news headline or short excerpt, return a JSON array containing exactly these three labels—"positive", "neutral", and "negative"—each with a confidence score (a float between 0 and 1). Sort the entries by descending confidence.
 
 -- Format --
@@ -53,6 +51,57 @@ Input: "{text}"
 Output:
 """  # noqa: E501
 
+
+FX_PROMPT_TEMPLATE = """You are a news sentiment classifier focused on foreign-exchange impact.
+Given a news headline or short excerpt, determine whether the news is likely to strengthen (positive), have no clear effect (neutral), or weaken (negative) the domestic currency. Return a YAML-style list containing exactly these three labels—"positive", "neutral", and "negative"—each with a confidence score (a float between 0 and 1). Sort the entries by descending confidence.
+
+-- Format --
+Input: "<news text>"
+Output:
+    -   label: "positive"
+        confidence: <float>
+    -   label: "neutral"
+        confidence: <float>
+    -   label: "negative"
+        confidence: <float">
+
+-- Examples --
+Input: "U.S. non-farm payrolls jump by 300,000, boosting expectations for Fed rate hikes"
+Output:
+    -   label: "positive"
+        confidence: 0. ninety
+    -   label: "neutral"
+        confidence: 0.07
+    -   label: "negative"
+        confidence: 0.03
+
+Input: "Federal Reserve holds rates steady amid balanced economic signals"
+Output:
+    -   label: "neutral"
+        confidence: 0. eighty
+    -   label: "positive"
+        confidence: 0.12
+    -   label: "negative"
+        confidence: 0.08
+
+Input: "Eurozone manufacturing PMI falls deeper into contraction territory"
+Output:
+    -   label: "negative"
+        confidence: 0. ninety-five
+    -   label: "neutral"
+        confidence: 0.04
+    -   label: "positive"
+        confidence: 0.01
+
+-- Now classify the following --
+Input: "{text}"
+Output:
+"""  # noqa: E501
+
+
+class LLMSentimentClassifier(BaseSentimentClassifier):
+    input_variables = ["text"]
+    default_prompt_template = DEFAULT_PROMPT_TEMPLATE
     def __init__(self, *, prompt_template: str = None):
         self.prompt_template = prompt_template or self.default_prompt_template
         self._check_prompt()
