@@ -1,0 +1,48 @@
+[project]
+name = "news-sentiment"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "hf-xet>=1.1.1",
+    "huggingface-hub>=0.31.2",
+    "openai>=1.78.1",
+    "pydantic>=2.11.4",
+    "python-dotenv>=1.1.0",
+    "torch>=2.7.0",
+    "transformers>=4.51.3",
+    "typing-extensions>=4.13.2",
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu" },
+]
+torchvision = [
+  { index = "pytorch-cpu" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[dependency-groups]
+lint = [
+    "ruff<1.0.0,>=0.5.0"
+]
+codespell = [
+    "codespell>=2.2.0,<3.0.0",
+]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+extend-select = ["UP", "E501"]
+pydocstyle = { convention = "google" }
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 75
